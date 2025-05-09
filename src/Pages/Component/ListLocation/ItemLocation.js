@@ -3,114 +3,131 @@ import classNames from "classnames/bind";
 import styles from "./ListLocation.module.scss";
 import { typeLocation, typeReqLocation } from "../../../assets/types";
 import Button from "../../../Component/Button";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { ToastContext } from "../../../contexts/ToastProvider/ToastProvider";
 
 const cx = classNames.bind(styles);
 
 function ItemLocation({ data, onRemove, typeL }) {
     const [desc, setDesc] = useState(data.desc ? data.desc : '');
+    const { toast } = useContext(ToastContext)
 
     const handlerAllowReq = async (type, typeReq) => {
         let isNext = window.confirm("Bạn có chắc chắn tiếp tục?");
-        if (typeL == 0) {
-            if (!isNext) return;
-            if (typeReq == 1) {
-                const response = await fetch(
-                    `https://680db89fc47cb8074d9106d1.mockapi.io/Locations/${data.idLocation}`,
-                    {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            type: type,
-                            lat: data.lat,
-                            lng: data.lng,
-                            desc: desc
-                        }),
-                    }
-                );
-                await fetch(
-                    `https://680db89fc47cb8074d9106d1.mockapi.io/ReqAddLocations/${data.id}`,
-                    {
-                        method: "DELETE",
-                    }
-                );
-                onRemove(data.id);
-            } else if (typeReq == 0) {
-                const response = await fetch(
-                    `https://680db89fc47cb8074d9106d1.mockapi.io/Locations`,
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            type: type,
-                            lat: data.lat,
-                            lng: data.lng,
-                            desc: desc
-                        }),
-                    }
-                );
-                await fetch(
-                    `https://680db89fc47cb8074d9106d1.mockapi.io/ReqAddLocations/${data.id}`,
-                    {
-                        method: "DELETE",
-                    }
-                );
-                onRemove(data.id);
-            } else if (typeReq === 2) {
-                await fetch(
-                    `https://680db89fc47cb8074d9106d1.mockapi.io/ReqAddLocations/${data.id}`,
-                    {
-                        method: "DELETE",
-                    }
-                );
+        if (!isNext) return;
+        toast.warning("Yêu cầu đang được gửi đi")
+        try {
 
-                if(type == 2) {
-                    await fetch(
+            if (typeL == 0) {
+                if (typeReq == 1) {
+                    const response = await fetch(
                         `https://680db89fc47cb8074d9106d1.mockapi.io/Locations/${data.idLocation}`,
+                        {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                type: type,
+                                lat: data.lat,
+                                lng: data.lng,
+                                desc: desc
+                            }),
+                        }
+                    );
+                    await fetch(
+                        `https://680db89fc47cb8074d9106d1.mockapi.io/ReqAddLocations/${data.id}`,
                         {
                             method: "DELETE",
                         }
                     );
+                    onRemove(data.id);
+                } else if (typeReq == 0) {
+                    const response = await fetch(
+                        `https://680db89fc47cb8074d9106d1.mockapi.io/Locations`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                type: type,
+                                lat: data.lat,
+                                lng: data.lng,
+                                desc: desc
+                            }),
+                        }
+                    );
+                    await fetch(
+                        `https://680db89fc47cb8074d9106d1.mockapi.io/ReqAddLocations/${data.id}`,
+                        {
+                            method: "DELETE",
+                        }
+                    );
+                    onRemove(data.id);
+                } else if (typeReq === 2) {
+                    await fetch(
+                        `https://680db89fc47cb8074d9106d1.mockapi.io/ReqAddLocations/${data.id}`,
+                        {
+                            method: "DELETE",
+                        }
+                    );
+    
+                    if(type == 2) {
+                        await fetch(
+                            `https://680db89fc47cb8074d9106d1.mockapi.io/Locations/${data.idLocation}`,
+                            {
+                                method: "DELETE",
+                            }
+                        );
+                    }
+                    onRemove(data.id);
+                } else {
+                    alert("Lỗi");
                 }
-                onRemove(data.id);
-            } else {
-                alert("Lỗi");
+                
             }
-            
+            else if(typeL == 1) {
+                await fetch(
+                    `https://680db89fc47cb8074d9106d1.mockapi.io/Locations/${data.id}`,
+                    {
+                        method: "DELETE",
+                    }
+                );
+                onRemove(data.id);
+            }
+
+            toast.success("Yêu cầu thành công")
         }
-        else if(typeL == 1) {
-            await fetch(
-                `https://680db89fc47cb8074d9106d1.mockapi.io/Locations/${data.id}`,
-                {
-                    method: "DELETE",
-                }
-            );
-            onRemove(data.id);
+        catch {
+            toast.error("Yêu cầu không thành công")
         }
     };
 
     const handlerUpdateLoc = async () => {
         let isNext = window.confirm("Bạn có chắc chắn tiếp tục?");
-        await fetch(
-            `https://680db89fc47cb8074d9106d1.mockapi.io/Locations/${data.id}`,
-            {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    data: data.type,
-                    lat: data.lat,
-                    lng: data.lng,
-                    desc: desc
-                }),
-            }
-        );
-        alert("Đã cập nhật.")
+        if (!isNext) return;
+        toast.warning("Yêu cầu đang được gửi đi")
+        try {
+            await fetch(
+                `https://680db89fc47cb8074d9106d1.mockapi.io/Locations/${data.id}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        data: data.type,
+                        lat: data.lat,
+                        lng: data.lng,
+                        desc: desc
+                    }),
+                }
+            );
+            toast.success("Yêu cầu thành công")
+        } catch {
+            toast.error("Yêu cầu không thành công")
+        }
     }
 
     const handlerDesc = (e) => {

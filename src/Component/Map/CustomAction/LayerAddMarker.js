@@ -5,13 +5,16 @@ import classNames from "classnames/bind";
 import styles from './CustomAction.module.scss';
 import Button from "../../Button";
 import { typeLocation, typeReqLocation } from "../../../assets/types";
+import { useContext } from "react";
+import { ToastContext } from "../../../contexts/ToastProvider/ToastProvider";
 
 const cx = classNames.bind(styles)
 
 function LayerAddMarker({ center, refs, classes, type }) {
+    const { toast } = useContext(ToastContext);
 
     const updateData = async () => {
-        
+        toast.warning('Yêu cầu đang được gửi đi')
         try {
             const response = await fetch(
                 `https://680db89fc47cb8074d9106d1.mockapi.io/ReqAddLocations`,
@@ -28,11 +31,10 @@ function LayerAddMarker({ center, refs, classes, type }) {
                     }),
                 }
             );
-
-            alert("Yêu cầu thêm điểm đã được gửi.")
+            toast.success("Yêu cầu đã được gửi đi");
         }
         catch {
-            alert("yêu cầu thêm điểm lỗi!!!")
+            toast.error("Yêu cầu gửi bị lỗi");
         }
     };
 

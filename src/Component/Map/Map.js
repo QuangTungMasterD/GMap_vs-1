@@ -2,7 +2,7 @@ import classNames from "classnames/bind";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import styles from "./Map.module.scss";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import "leaflet-control-geocoder/dist/Control.Geocoder.css";
 import "leaflet-control-geocoder";
 import Button from "../Button";
@@ -11,6 +11,7 @@ import MarkersFromAPI from "./CustomAction/MarkersFromAPI";
 import LayerAddMarker from "./CustomAction/LayerAddMarker";
 
 import { customIcon } from "../../assets/types";
+import { ToastContext } from "../../contexts/ToastProvider/ToastProvider";
 
 const cx = classNames.bind(styles);
 
