@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import Button from "../../Button";
@@ -6,6 +6,7 @@ import { typeLocation, typeReqLocation, customIcon } from "../../../assets/types
 import classNames from "classnames/bind";
 
 import styles from "./CustomAction.module.scss"
+import { ToastContext } from "../../../contexts/ToastProvider/ToastProvider";
 
 const cx = classNames.bind(styles)
 
@@ -27,6 +28,7 @@ function MarkersFromAPI({ searchLocation }) {
     const [locations, setLocations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { toast } = useContext(ToastContext)
 
     useEffect(() => {
         const fetchLocations = async () => {
@@ -64,7 +66,11 @@ function MarkersFromAPI({ searchLocation }) {
           })
         : [];
 
+    // const { toast } = useContext(ToastContext)
+
     const handlerUpdate = async (loc, typeChange, typeReq) => {
+        toast.warning("yêu cầu đang được gửi đi");
+        
         try {
             const putResponse = await fetch(
                 `https://680db89fc47cb8074d9106d1.mockapi.io/ReqAddLocations/${loc.id}`,
@@ -87,7 +93,8 @@ function MarkersFromAPI({ searchLocation }) {
             }
 
             const updatedData = await putResponse.json();
-            alert("Yều cầu của bạn đã được nhận.")
+            toast.success("yêu cầu đã được nhận");
+            
             return updatedData;
         } catch (putError) {
 
@@ -108,10 +115,10 @@ function MarkersFromAPI({ searchLocation }) {
                         }),
                     }
                 );
-                alert("Yều cầu của bạn đã được nhận.")
+                toast.success("yêu cầu đã được nhận");
 
                 if (!postResponse.ok) {
-                    throw new Error("POST request also failed");
+                    toast.error("yêu cầu không thành công");
                 }
             } catch (postError) {
                 console.error("Cả PUT và POST đều thất bại:", postError);
