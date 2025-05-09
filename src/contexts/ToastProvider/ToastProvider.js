@@ -5,12 +5,12 @@ import { ToastContainer, toast } from 'react-toastify';
 export const ToastContext = createContext()
 
 function ToastProvider({ children }) {
-    const value = {
+    const values = {
         toast
     }
 
     return (
-        <ToastContext.Provider value={value}>
+        <ToastContext.Provider value={values}>
             {children}
             <ToastContainer closeOnClick draggable position="top-right" />
         </ToastContext.Provider>
