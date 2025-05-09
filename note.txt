@@ -1,0 +1,6 @@
+type: [
+    1: Clean,
+    2: Dirty,
+    3: Doing,
+    4: Station
+]

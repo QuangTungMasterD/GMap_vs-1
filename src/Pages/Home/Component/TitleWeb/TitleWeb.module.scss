@@ -1,0 +1,128 @@
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // align-items: stretch;
+
+    &.primary .desc-title {
+        background-color: var(--primary-color);
+        border: none;
+        color: #eee;
+    }
+
+    &.blue .desc-title {
+        background-color: #00BFFF;
+        color: #eee;
+        border: none;
+    }
+
+    &.small .img-title {
+        height: 100px;
+        width: 100px;
+    }
+
+    & + & {
+        margin-top: 24px;
+    }
+}
+
+.img-title {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 200px;
+    width: 200px;
+    border-radius: 10px;
+    box-shadow: 0 0 6px #dfdfdf;
+
+    & + .desc-title {
+        border-left: 1px solid #bbb;
+        padding: 12px 80px 12px 18px;
+        margin: 12px 0;
+        border-top-right-radius: 22px;
+        border-bottom-right-radius: 22px;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        text-align: left;
+        border: 2px solid var(--primary-color);
+        border-left: none;
+    }
+}
+
+.desc-title {
+    flex: 1;
+    font-size: 16px;
+    border-top-left-radius: 22px;
+    border-bottom-left-radius: 22px;
+    padding: 12px 18px 12px 80px;
+    text-align: right;
+    margin: 12px 0;
+    border: 2px solid var(--primary-color);
+    border-right: none;
+}
+
+.title {
+    width: 100%;
+    font-size: 34px;
+    font-weight: 10px;
+}
+
+.desc {
+    text-align: justify;
+}
+
+@media (min-width: 740px) and (max-width: 1024px) {
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+
+        & + & {
+            // margin-top: 120px;
+        }
+    }
+    
+    .img-title {
+        display: none;
+    }
+
+    .desc-title {
+        height: auto;
+        flex: 1;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1450px) {
+    .wrapper {
+        display: flex;
+        align-items: center;
+        height: auto;
+
+        & + & {
+            // margin-top: 120px;
+        }
+    }
+}
+
+@media (max-width: 740px) {
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+
+        & + & {
+            // margin-top: 120px;
+        }
+    }
+    
+    .img-title {
+        display: none;
+    }
+
+    .desc-title {
+        height: auto;
+        flex: 1;
+    }
+}

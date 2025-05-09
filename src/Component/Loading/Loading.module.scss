@@ -1,0 +1,82 @@
+// body {
+//     height: 100vh;
+//     margin: 0;
+//     display: grid;
+//     place-items: center;
+//     background: .212121;
+// }
+
+.svg-frame {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    transform-style: preserve-3d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+svg {
+    width: 344px;
+    height: 344px;
+    z-index: calc(1 - (0.2 * var(--j)));
+    transform-origin: center;
+    fill: none;
+    position: absolute;
+    transition: .5s;
+}
+
+svg .center {
+    transition: .5s;
+    transform-origin: center;
+}
+
+.out2 {
+    animation: anim 7s ease-in-out infinite alternate;
+    transform-origin: center;
+}
+
+@keyframes anim {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes circleF {
+    from {
+        transform: rotate(0);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.out3 {
+    animation: anim 3s ease-in-out infinite alternate;
+    transform-origin: center;
+    stroke: #ff0;
+}
+
+.inner3 {
+    animation: circleF 4s linear infinite;
+    transform-origin: center;
+}
+
+.inner1 {
+    animation: anim 4s ease-in-out infinite alternate;
+    transform-origin: center;
+}
+
+.center1 {
+    fill: #ff0;
+    animation: anim 2s ease-in-out infinite alternate;
+    transform-origin: center;
+}
+
+.svg-frame:hover svg {
+    transform: rotate(-80deg) skew(30deg) translateX(calc(45px * var(--i))) translateY(calc(-35px * var(--i)));
+}
+
+.svg-frame:hover svg .center {
+    transform: rotate(-30deg) translateX(45px) translateY(-3px);
+}

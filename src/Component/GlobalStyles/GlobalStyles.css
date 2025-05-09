@@ -1,0 +1,17 @@
+:root {
+    --height-header: 74px;
+    --primary-color: #26B926;
+    --primary-color-border: #075707;
+    --text-primary-color: #188218;
+    --primary-color-opacity: #65c365;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+button {
+    cursor: pointer;
+}

@@ -1,0 +1,19 @@
+.wrapper {
+    padding: 3px 6px;
+    border-radius: 6px;
+    width: 100%;
+    
+    &.isPrimary {
+        background-color: var(--primary-color);
+        border: 2px solid var(--primary-color-border);
+        color: #fff;
+
+        &:hover {
+            background-color: var(--primary-color-opacity);
+        }
+    }
+    
+    & + & {
+        margin-left: 10px;
+    }
+}

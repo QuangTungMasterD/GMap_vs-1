@@ -1,0 +1,27 @@
+// .banner-show {
+//     height: calc(100vh - var(--height-header));
+//     overflow: hidden;
+// }
+
+.content {
+    width: 1400px;
+    margin: 36px auto 0px;
+}
+
+@media (min-width: 1024px) and (max-width: 1450px) {
+    .content {
+        width: 800px;
+    }
+}
+
+@media (min-width: 740px) and (max-width: 1024px) {
+    .content {
+        width: 700px;
+    }
+}
+
+@media (max-width: 740px) {
+    .content {
+        width: 100%;
+    }
+}
