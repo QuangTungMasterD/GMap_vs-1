@@ -8,26 +8,28 @@
 
 @media (min-width: 740px) and (max-width: 1024px) {
     .nav-footer {
-        width: 700px;
         display: flex;
+        max-width: 100%;
+        overflow: hidden;
         flex-direction: column;
     }
 }
 
 @media (max-width: 740px) {
     .nav-footer {
-        // width: 100%;
-        width: 800px;
         display: flex;
+        max-width: 100%;
+        overflow: hidden;
         flex-direction: column;
     }
 }
 
 .nav-footer {
     display: flex;
+    overflow: hidden;
+    max-width: 100%;
     margin: 0 auto;
     margin-top: 24px;
-    width: 1400px;
 }
 
 .make-by {
