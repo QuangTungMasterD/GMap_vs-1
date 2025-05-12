@@ -1,30 +1,34 @@
 import classNames from "classnames/bind";
 import "leaflet/dist/leaflet.css";
-import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
 import styles from "./Map.module.scss";
-import { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef } from "react";
 import "leaflet-control-geocoder/dist/Control.Geocoder.css";
 import "leaflet-control-geocoder";
 import Button from "../Button";
-import L, { icon } from "leaflet";
+import L from "leaflet";
 import MarkersFromAPI from "./CustomAction/MarkersFromAPI";
 import LayerAddMarker from "./CustomAction/LayerAddMarker";
 
 import { customIcon } from "../../assets/types";
-import { ToastContext } from "../../contexts/ToastProvider/ToastProvider";
 
 const cx = classNames.bind(styles);
 
 const typeMap = [
     {
-        image: "",
+        image: require('../../assets/images/type-map-0.png'),
         attri: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     },
     {
-        image: "",
+        image: require('../../assets/images/type-map-1.png'),
+        attri: "Map tiles &copy; Esri — Source: Esri, DeLorme, NAVTEQ",
+        url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
+    },
+    {
+        image: require('../../assets/images/type-map-2.png'),
         attri: "Tiles &copy; Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, and the GIS User Community",
-        url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
     },
 ];
 
@@ -77,18 +81,10 @@ function Map() {
               ]
             : [20, 20]
     );
+    const [iTypeMap, setITypeMap] = useState(
+        sessionStorage.getItem("iTypeMap") ? Number(sessionStorage.getItem("iTypeMap")) : typeMap.length - 1
+    )
 
-    const [attributionLayer, setAttributionLayer] = useState(
-        sessionStorage.getItem("attributionLayer")
-            ? sessionStorage.getItem("attributionLayer")
-            : "Tiles &copy; Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, and the GIS User Community"
-    );
-    const [urlLayer, setUrlLayer] = useState(
-        sessionStorage.getItem("urlLayer")
-            ? sessionStorage.getItem("urlLayer")
-            : //"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
-    );
     const [type, setType] = useState(1)
 
     const mapRef = useRef(null);
@@ -104,12 +100,12 @@ function Map() {
     const handlerAddMarker = () => {
         const controlMap = document.querySelector(".leaflet-control-container");
         controlMap.style.display =
-            controlMap.style.display == "block" ||
-            controlMap.style.display == ""
+            controlMap.style.display === "block" ||
+            controlMap.style.display === ""
                 ? "none"
                 : "block";
         tgAddPlus.current.style.display =
-            controlMap.style.display == "block" ? "none" : "flex";
+            controlMap.style.display === "block" ? "none" : "flex";
     };
 
     function MapEvents() {
@@ -203,8 +199,8 @@ function Map() {
         
             // if (
             //     UserPosition.current &&
-            //     lat === UserPosition.current[0] &&
-            //     lng === UserPosition.current[1]
+            //     lat ==== UserPosition.current[0] &&
+            //     lng ==== UserPosition.current[1]
             // ) {
             //     return;
             // }
@@ -220,11 +216,18 @@ function Map() {
                     mapRef.current.removeLayer(markerCur);
                 }
             };
-        }, [sPosition]);
+        });
 
         return null;
     }
-    
+
+    const handlerChangeTypeMap = () => {
+        let nextType = iTypeMap + 1
+        if(nextType > typeMap.length - 1) nextType = 0;
+        setITypeMap(nextType)
+        sessionStorage.setItem("iTypeMap", nextType)
+    }
+
     return (
         <div className={cx("wrapper")}>
             <MapContainer
@@ -242,11 +245,11 @@ function Map() {
                     classes={cx("plus-icon")}
                     type={type}
                 />
-                <TileLayer attribution={attributionLayer} url={urlLayer} />
+                <TileLayer attribution={typeMap[iTypeMap].attri} url={typeMap[iTypeMap].url} />
                 {/* <Marker position={UserPosition} /> */}
                 <MarkersFromAPI searchLocation={sPosition} />
                 <MarkersFromAPI searchLocation={UserPosition.current} />
-                <div className={cx("cus-btn")}>
+                <div className={cx("cus-btn-top-right")}>
                     <MapEvents />
                     <Button
                         onClick={handlerLocation}
@@ -270,6 +273,16 @@ function Map() {
                         isPrimary
                         title="Thêm điểm tái chế"
                     />
+                    {/* <select onChange={(e) => handlerChangeTypeMap(e)}>
+                        {
+                            typeMap.map((item, i) => {
+                                return <option key={i} value={JSON.stringify({ url: item.url, att: item.attri })}>{item.icon}</option>
+                            })
+                        }
+                    </select> */}
+                </div>
+                <div className={cx("cus-btn-bottom-left")}>
+                    <Button style={{ backgroundImage: `url(${typeMap[iTypeMap + 1 > typeMap.length - 1 ? 0 : iTypeMap + 1].image})` }} onClick={() => handlerChangeTypeMap()} className={cx('btn-cus-map', 'type-map')} />
                 </div>
             </MapContainer>
         </div>

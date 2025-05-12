@@ -5,6 +5,7 @@ const cx = classNames.bind(styles);
 
 function Button({
     title,
+    style,
     leftIcon,
     rightIcon,
     isPrimary,
@@ -24,7 +25,7 @@ function Button({
     });
 
     return (
-        <button className={classes} {...prop}>
+        <button style={style} className={classes} {...prop}>
             {title}
         </button>
     );

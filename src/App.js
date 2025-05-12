@@ -7,6 +7,7 @@ import ReqUserManage from "./Pages/ReqUserManage";
 import SideLayout from "./Layout/SideLayout/SideLayout";
 import CurrentLocationManage from "./Pages/CurrentLocationManage";
 import ToastProvider from "./contexts/ToastProvider/ToastProvider";
+import HeaderOnly from "./Layout/HeaderOnly/HeaderOnly";
 
 function App() {
     const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
@@ -28,9 +29,9 @@ function App() {
                         <Route
                             path={"/Map"}
                             element={
-                                <DefaultLayout>
+                                <HeaderOnly>
                                     <Map />
-                                </DefaultLayout>
+                                </HeaderOnly>
                             }
                         />
                         {isLocalhost ? (
