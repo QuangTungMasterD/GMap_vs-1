@@ -68,7 +68,7 @@ function MarkersFromAPI({ searchLocation }) {
 
     // const { toast } = useContext(ToastContext)
 
-    const handlerUpdate = async (loc, typeChange, typeReq) => {
+    const handlerUpdate = async (desc, loc, typeChange, typeReq) => {
         toast.warning("yêu cầu đang được gửi đi");
         
         try {
@@ -83,7 +83,8 @@ function MarkersFromAPI({ searchLocation }) {
                         lat: loc.lat,
                         lng: loc.lng,
                         typechange: typeChange,
-                        typeReq: typeReq
+                        typeReq: typeReq,
+                        desc: desc ? desc : ''
                     }),
                 }
             );
@@ -111,7 +112,8 @@ function MarkersFromAPI({ searchLocation }) {
                             lat: loc.lat,
                             lng: loc.lng,
                             typechange: typeChange,
-                            typeReq: typeReq
+                            typeReq: typeReq,
+                        desc: desc ? desc : ''
                         }),
                     }
                 );
@@ -150,13 +152,13 @@ function MarkersFromAPI({ searchLocation }) {
                             </a>
                             {
                                 loc.type == 0 ? (<Button
-                                    onClick={() => handlerUpdate(loc, typeLocation.dirty, typeReqLocation.change)}
+                                    onClick={() => handlerUpdate(loc.desc, loc, typeLocation.dirty, typeReqLocation.change)}
                                     title="Điểm lại bẩn"
                                 />) : loc.type == 1 ? (<Button
-                                    onClick={() => handlerUpdate(loc, typeLocation.clean, typeReqLocation.change)}
+                                    onClick={() => handlerUpdate(loc.desc, loc, typeLocation.clean, typeReqLocation.change)}
                                     title="Điểm đã sạch"
                                 />) : (<Button
-                                    onClick={() => handlerUpdate(loc, typeLocation.recycle, typeReqLocation.remove)}
+                                    onClick={() => handlerUpdate(loc.desc, loc, typeLocation.recycle, typeReqLocation.remove)}
                                     title="Điểm bị dỡ"
                                 />)
                             }

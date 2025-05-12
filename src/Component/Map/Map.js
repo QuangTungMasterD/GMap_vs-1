@@ -273,13 +273,6 @@ function Map() {
                         isPrimary
                         title="Thêm điểm tái chế"
                     />
-                    {/* <select onChange={(e) => handlerChangeTypeMap(e)}>
-                        {
-                            typeMap.map((item, i) => {
-                                return <option key={i} value={JSON.stringify({ url: item.url, att: item.attri })}>{item.icon}</option>
-                            })
-                        }
-                    </select> */}
                 </div>
                 <div className={cx("cus-btn-bottom-left")}>
                     <Button style={{ backgroundImage: `url(${typeMap[iTypeMap + 1 > typeMap.length - 1 ? 0 : iTypeMap + 1].image})` }} onClick={() => handlerChangeTypeMap()} className={cx('btn-cus-map', 'type-map')} />
