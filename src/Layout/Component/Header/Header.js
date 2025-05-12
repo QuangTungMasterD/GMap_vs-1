@@ -14,7 +14,7 @@ function Header() {
                     <NavLink className={(nav) => cx('link', {
                         active: nav.isActive
                     })} href="/" to="/">
-                        <img src={require('../../../assets/images/LOGO-Text.png')} />
+                        <img className={cx('image-logo')} src={require('../../../assets/images/LOGO-Text.png')} />
                     </NavLink>
                     <NavLink className={(nav) => cx('link', {
                         active: nav.isActive
