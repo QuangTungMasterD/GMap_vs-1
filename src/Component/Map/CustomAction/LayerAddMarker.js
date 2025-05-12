@@ -27,7 +27,8 @@ function LayerAddMarker({ center, refs, classes, type }) {
                         lat: center[0],
                         lng: center[1],
                         typechange: typeLocation.dirty == type ? 1 : 2,
-                        typeReq: typeReqLocation.add
+                        typeReq: typeReqLocation.add,
+                        desc: ''
                     }),
                 }
             );
