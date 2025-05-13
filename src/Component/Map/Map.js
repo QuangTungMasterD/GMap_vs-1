@@ -15,16 +15,16 @@ import { customIcon } from "../../assets/types";
 const cx = classNames.bind(styles);
 
 const typeMap = [
-    {
-        image: require('../../assets/images/type-map-0.png'),
-        attri: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    },
-    {
-        image: require('../../assets/images/type-map-1.png'),
-        attri: "Map tiles &copy; Esri — Source: Esri, DeLorme, NAVTEQ",
-        url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
-    },
+    // {
+    //     image: require('../../assets/images/type-map-0.png'),
+    //     attri: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    //     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    // },
+    // {
+    //     image: require('../../assets/images/type-map-1.png'),
+    //     attri: "Map tiles &copy; Esri — Source: Esri, DeLorme, NAVTEQ",
+    //     url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
+    // },
     {
         image: require('../../assets/images/type-map-2.png'),
         attri: "Tiles &copy; Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, and the GIS User Community",
