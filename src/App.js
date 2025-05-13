@@ -2,7 +2,7 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import DefaultLayout from "./Layout/DefaultLayout/DefaultLayout";
 import Home from "./Pages/Home/Home";
-import Map from "./Pages/Map/Map";
+import Map from './Component/Map'
 import ReqUserManage from "./Pages/ReqUserManage";
 import SideLayout from "./Layout/SideLayout/SideLayout";
 import CurrentLocationManage from "./Pages/CurrentLocationManage";

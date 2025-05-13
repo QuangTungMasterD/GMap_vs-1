@@ -1,1 +1,1 @@
-export { default as ComMap } from './Map'
+export { default  } from './Map'
