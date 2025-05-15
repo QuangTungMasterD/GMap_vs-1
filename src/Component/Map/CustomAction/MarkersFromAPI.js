@@ -4,11 +4,13 @@ import L from "leaflet";
 import Button from "../../Button";
 import { typeLocation, typeReqLocation, customIcon } from "../../../assets/types";
 import classNames from "classnames/bind";
+import { database } from "../../../untils/fileBaseConfig"; // Điều chỉnh đường dẫn
+import { ref, onValue, update, push, set } from "firebase/database";
 
-import styles from "./CustomAction.module.scss"
+import styles from "./CustomAction.module.scss";
 import { ToastContext } from "../../../contexts/ToastProvider/ToastProvider";
 
-const cx = classNames.bind(styles)
+const cx = classNames.bind(styles);
 
 const getDistance = (lat1, lng1, lat2, lng2) => {
     const R = 6371;
@@ -17,9 +19,9 @@ const getDistance = (lat1, lng1, lat2, lng2) => {
     const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos(lat1 * (Math.PI / 180)) *
-            Math.cos(lat2 * (Math.PI / 180)) *
-            Math.sin(dLng / 2) *
-            Math.sin(dLng / 2);
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
 };
@@ -28,31 +30,42 @@ function MarkersFromAPI({ searchLocation }) {
     const [locations, setLocations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { toast } = useContext(ToastContext)
+    const { toast } = useContext(ToastContext);
 
     useEffect(() => {
-        const fetchLocations = async () => {
-            try {
-                const response = await fetch(
-                    "https://680db89fc47cb8074d9106d1.mockapi.io/Locations"
-                );
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
+        const locationsRef = ref(database, "locations");
+
+        const unsubscribe = onValue(
+            locationsRef,
+            (snapshot) => {
+                try {
+                    const data = snapshot.val();
+                    if (data) {
+                        const locationsArray = Object.keys(data).map((key) => ({
+                            id: key,
+                            ...data[key],
+                        }));
+                        setLocations(locationsArray);
+                    } else {
+                        setLocations([]);
+                    }
+                    setLoading(false);
+                } catch (err) {
+                    setError("Lỗi khi lấy dữ liệu từ Firebase");
+                    setLoading(false);
                 }
-                const data = await response.json();
-                setLocations(data);
-            } catch (err) {
-                setError(err.message);
-            } finally {
+            },
+            (err) => {
+                setError("Lỗi kết nối Firebase: " + err.message);
                 setLoading(false);
             }
-        };
+        );
 
-        fetchLocations();
+        return () => unsubscribe();
     }, []);
 
-    if (loading) return <p>Loading locations...</p>;
-    if (error) return <p>Error loading locations: {error}</p>;
+    if (loading) return <p>Đang tải vị trí...</p>;
+    if (error) return <p>Lỗi khi tải vị trí: {error}</p>;
 
     const nearbyLocations = searchLocation
         ? locations.filter((location) => {
@@ -66,68 +79,40 @@ function MarkersFromAPI({ searchLocation }) {
           })
         : [];
 
-    // const { toast } = useContext(ToastContext)
-
     const handlerUpdate = async (desc, loc, typeChange, typeReq) => {
-        toast.warning("yêu cầu đang được gửi đi");
-        
+        toast.warning("Yêu cầu đang được gửi đi");
+
         try {
-            const putResponse = await fetch(
-                `https://680db89fc47cb8074d9106d1.mockapi.io/ReqAddLocations/${loc.id}`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        lat: loc.lat,
-                        lng: loc.lng,
-                        typechange: typeChange,
-                        typeReq: typeReq,
-                        desc: desc ? desc : ''
-                    }),
-                }
-            );
+            const locationRef = ref(database, `locations/${loc.id}`);
+            await update(locationRef, {
+                lat: loc.lat,
+                lng: loc.lng,
+                type: typeChange,
+                desc: desc || "",
+            });
 
-            if (!putResponse.ok) {
-                throw new Error("PUT request failed");
-            }
-
-            const updatedData = await putResponse.json();
-            toast.success("yêu cầu đã được nhận");
-            
-            return updatedData;
+            toast.success("Yêu cầu đã được nhận");
         } catch (putError) {
-
             try {
-                const postResponse = await fetch(
-                    "https://680db89fc47cb8074d9106d1.mockapi.io/ReqAddLocations",
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            idLocation: loc.id,
-                            lat: loc.lat,
-                            lng: loc.lng,
-                            typechange: typeChange,
-                            typeReq: typeReq,
-                        desc: desc ? desc : ''
-                        }),
-                    }
-                );
-                toast.success("yêu cầu đã được nhận");
+                const reqLocationsRef = ref(database, "reqAddLocations");
+                const newRequestRef = push(reqLocationsRef);
+                await set(newRequestRef, {
+                    idLocation: loc.id,
+                    lat: loc.lat,
+                    lng: loc.lng,
+                    typechange: typeChange,
+                    typeReq: typeReq,
+                    desc: desc || "",
+                });
 
-                if (!postResponse.ok) {
-                    toast.error("yêu cầu không thành công");
-                }
+                toast.success("Yêu cầu đã được nhận");
             } catch (postError) {
+                toast.error("Yêu cầu không thành công");
                 console.error("Cả PUT và POST đều thất bại:", postError);
             }
         }
     };
-    
+
     return (
         <>
             {nearbyLocations.map((loc) => (
@@ -135,34 +120,62 @@ function MarkersFromAPI({ searchLocation }) {
                     key={loc.id}
                     position={[parseFloat(loc.lat), parseFloat(loc.lng)]}
                     icon={
-                        loc.type == 0 ? customIcon.cleanIcon : loc.type == 1 ? customIcon.dirtyIcon : customIcon.recycleIcon
+                        loc.type == 0
+                            ? customIcon.cleanIcon
+                            : loc.type == 1
+                            ? customIcon.dirtyIcon
+                            : customIcon.recycleIcon
                     }
                 >
                     <Popup>
-                        <div className={cx('desc-location')}>
+                        <div className={cx("desc-location")}>
                             <br />
-                            {loc.desc || "No description available"}
+                            {loc.desc || "Không có mô tả"}
                             <br />
                             <a
                                 href={`https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}&travelmode=driving`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                Đường đi trên google map
+                                Đường đi trên Google Map
                             </a>
-                            {
-                                loc.type == 0 ? (<Button
-                                    onClick={() => handlerUpdate(loc.desc, loc, typeLocation.dirty, typeReqLocation.change)}
+                            {loc.type == 0 ? (
+                                <Button
+                                    onClick={() =>
+                                        handlerUpdate(
+                                            loc.desc,
+                                            loc,
+                                            typeLocation.dirty,
+                                            typeReqLocation.change
+                                        )
+                                    }
                                     title="Điểm lại bẩn"
-                                />) : loc.type == 1 ? (<Button
-                                    onClick={() => handlerUpdate(loc.desc, loc, typeLocation.clean, typeReqLocation.change)}
+                                />
+                            ) : loc.type == 1 ? (
+                                <Button
+                                    onClick={() =>
+                                        handlerUpdate(
+                                            loc.desc,
+                                            loc,
+                                            typeLocation.clean,
+                                            typeReqLocation.change
+                                        )
+                                    }
                                     title="Điểm đã sạch"
-                                />) : (<Button
-                                    onClick={() => handlerUpdate(loc.desc, loc, typeLocation.recycle, typeReqLocation.remove)}
+                                />
+                            ) : (
+                                <Button
+                                    onClick={() =>
+                                        handlerUpdate(
+                                            loc.desc,
+                                            loc,
+                                            typeLocation.recycle,
+                                            typeReqLocation.remove
+                                        )
+                                    }
                                     title="Điểm bị dỡ"
-                                />)
-                            }
-                            
+                                />
+                            )}
                         </div>
                     </Popup>
                 </Marker>
