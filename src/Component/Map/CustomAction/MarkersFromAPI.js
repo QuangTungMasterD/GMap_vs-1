@@ -97,7 +97,7 @@ function MarkersFromAPI({ searchLocation }) {
                 desc: desc || "",
             });
 
-            toast.success("Yêu cầu đã được gửi lên reqAddLocations");
+            toast.success("Yêu cầu đã được gửi.");
         } catch (error) {
             toast.error("Yêu cầu gửi bị lỗi");
             console.error("Lỗi khi gửi yêu cầu:", error);
