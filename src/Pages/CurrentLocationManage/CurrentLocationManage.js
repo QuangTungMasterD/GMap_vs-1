@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import classNames from "classnames/bind";
-import { database } from "../../untils/fileBaseConfig"; // Điều chỉnh đường dẫn
+import { database } from "../../untils/fileBaseConfig"; 
 import { ref, onValue } from "firebase/database";
 
 import styles from './CurrentLocationManage.module.scss';

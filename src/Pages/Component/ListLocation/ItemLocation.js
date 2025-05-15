@@ -1,5 +1,5 @@
 import classNames from "classnames/bind";
-import { database } from "../../../untils/fileBaseConfig"; // Điều chỉnh đường dẫn
+import { database } from "../../../untils/fileBaseConfig"; 
 import { ref, update, push, set, remove } from "firebase/database";
 
 import styles from "./ListLocation.module.scss";
@@ -21,8 +21,8 @@ function ItemLocation({ data, onRemove, typeL }) {
 
         try {
             if (typeL == 0) {
-                if (typeReq == 1) { // typeReq == "change"
-                    // Cập nhật location hiện có (PUT)
+                if (typeReq == 1) { 
+                    
                     const locationRef = ref(database, `locations/${data.idLocation}`);
                     await update(locationRef, {
                         type: type,
@@ -31,14 +31,14 @@ function ItemLocation({ data, onRemove, typeL }) {
                         desc: desc
                     });
 
-                    // Xóa yêu cầu từ reqAddLocations (DELETE)
+                    
                     const reqRef = ref(database, `reqAddLocations/${data.id}`);
                     await remove(reqRef);
                     onRemove(data.id);
-                } else if (typeReq == 0) { // typeReq == "add"
-                    // Thêm location mới (POST)
+                } else if (typeReq == 0) { 
+                    
                     const locationsRef = ref(database, "locations");
-                    const newLocationRef = push(locationsRef); // Tạo ID tự động
+                    const newLocationRef = push(locationsRef); 
                     await set(newLocationRef, {
                         id: newLocationRef.key,
                         type: type,
@@ -47,17 +47,17 @@ function ItemLocation({ data, onRemove, typeL }) {
                         desc: desc
                     });
 
-                    // Xóa yêu cầu từ reqAddLocations (DELETE)
+                    
                     const reqRef = ref(database, `reqAddLocations/${data.id}`);
                     await remove(reqRef);
                     onRemove(data.id);
-                } else if (typeReq === 2) { // typeReq == "remove"
-                    // Xóa yêu cầu từ reqAddLocations (DELETE)
+                } else if (typeReq === 2) { 
+                    
                     const reqRef = ref(database, `reqAddLocations/${data.id}`);
                     await remove(reqRef);
 
                     if (type == 2) {
-                        // Xóa location từ locations (DELETE)
+                        
                         const locationRef = ref(database, `locations/${data.idLocation}`);
                         await remove(locationRef);
                     }
@@ -66,7 +66,7 @@ function ItemLocation({ data, onRemove, typeL }) {
                     throw new Error("Lỗi logic typeReq");
                 }
             } else if (typeL == 1) {
-                // Xóa location từ locations (DELETE)
+                
                 const locationRef = ref(database, `locations/${data.id}`);
                 await remove(locationRef);
                 onRemove(data.id);
@@ -85,10 +85,10 @@ function ItemLocation({ data, onRemove, typeL }) {
         toast.warning("Yêu cầu đang được gửi đi");
 
         try {
-            // Cập nhật mô tả của location (PUT)
+            
             const locationRef = ref(database, `locations/${data.id}`);
             await update(locationRef, {
-                type: data.type, // Giữ nguyên type
+                type: data.type, 
                 lat: data.lat,
                 lng: data.lng,
                 desc: desc

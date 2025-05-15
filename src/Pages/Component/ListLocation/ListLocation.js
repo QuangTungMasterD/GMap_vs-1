@@ -8,7 +8,7 @@ const cx = classNames.bind(styles);
 
 function ListLocation({ list, titleEmpty, typeL }) {
     const [locations, setLocations] = useState([...list]);
-
+    console.log(locations)
     useEffect(() => {
         setLocations([...list]);
     }, [list]);

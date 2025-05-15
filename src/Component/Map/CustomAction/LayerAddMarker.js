@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import classNames from "classnames/bind";
-import { database } from "../../../untils/fileBaseConfig"; // Điều chỉnh đường dẫn
+import { database } from "../../../untils/fileBaseConfig"; 
 import { ref, push, set } from "firebase/database";
 
 import styles from './CustomAction.module.scss';
@@ -18,9 +18,9 @@ function LayerAddMarker({ center, refs, classes, type }) {
     const updateData = async () => {
         toast.warning('Yêu cầu đang được gửi đi');
         try {
-            // Thêm dữ liệu vào node 'reqAddLocations' trong Firebase (tương đương POST)
+            
             const reqLocationsRef = ref(database, "reqAddLocations");
-            const newRequestRef = push(reqLocationsRef); // Tạo ID tự động cho yêu cầu mới
+            const newRequestRef = push(reqLocationsRef); 
             await set(newRequestRef, {
                 lat: center[0],
                 lng: center[1],

@@ -4,8 +4,8 @@ import L from "leaflet";
 import Button from "../../Button";
 import { typeLocation, typeReqLocation, customIcon } from "../../../assets/types";
 import classNames from "classnames/bind";
-import { database } from "../../../untils/fileBaseConfig"; // Điều chỉnh đường dẫn
-import { ref, onValue, update, push, set } from "firebase/database";
+import { database } from "../../../untils/fileBaseConfig";
+import { ref, onValue, push, set } from "firebase/database";
 
 import styles from "./CustomAction.module.scss";
 import { ToastContext } from "../../../contexts/ToastProvider/ToastProvider";
@@ -19,9 +19,9 @@ const getDistance = (lat1, lng1, lat2, lng2) => {
     const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos(lat1 * (Math.PI / 180)) *
-        Math.cos(lat2 * (Math.PI / 180)) *
-        Math.sin(dLng / 2) *
-        Math.sin(dLng / 2);
+            Math.cos(lat2 * (Math.PI / 180)) *
+            Math.sin(dLng / 2) *
+            Math.sin(dLng / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
 };
@@ -41,10 +41,12 @@ function MarkersFromAPI({ searchLocation }) {
                 try {
                     const data = snapshot.val();
                     if (data) {
-                        const locationsArray = Object.keys(data).map((key) => ({
-                            id: key,
-                            ...data[key],
-                        }));
+                        const locationsArray = Object.keys(data)
+                            .map((key) => ({
+                                id: key,
+                                ...data[key],
+                            }))
+                            .filter(item => item.lat && item.lng && item.type !== undefined);
                         setLocations(locationsArray);
                     } else {
                         setLocations([]);
@@ -83,33 +85,22 @@ function MarkersFromAPI({ searchLocation }) {
         toast.warning("Yêu cầu đang được gửi đi");
 
         try {
-            const locationRef = ref(database, `locations/${loc.id}`);
-            await update(locationRef, {
+            const reqLocationsRef = ref(database, "reqAddLocations");
+            const newRequestRef = push(reqLocationsRef);
+            await set(newRequestRef, {
+                id: newRequestRef.key,
+                idLocation: loc.id,
                 lat: loc.lat,
                 lng: loc.lng,
-                type: typeChange,
+                typechange: typeChange,
+                typeReq: typeReq,
                 desc: desc || "",
             });
 
-            toast.success("Yêu cầu đã được nhận");
-        } catch (putError) {
-            try {
-                const reqLocationsRef = ref(database, "reqAddLocations");
-                const newRequestRef = push(reqLocationsRef);
-                await set(newRequestRef, {
-                    idLocation: loc.id,
-                    lat: loc.lat,
-                    lng: loc.lng,
-                    typechange: typeChange,
-                    typeReq: typeReq,
-                    desc: desc || "",
-                });
-
-                toast.success("Yêu cầu đã được nhận");
-            } catch (postError) {
-                toast.error("Yêu cầu không thành công");
-                console.error("Cả PUT và POST đều thất bại:", postError);
-            }
+            toast.success("Yêu cầu đã được gửi lên reqAddLocations");
+        } catch (error) {
+            toast.error("Yêu cầu gửi bị lỗi");
+            console.error("Lỗi khi gửi yêu cầu:", error);
         }
     };
 
