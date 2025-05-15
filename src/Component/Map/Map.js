@@ -132,7 +132,6 @@ function Map() {
                     watch: true,
                     enableHighAccuracy: true,
                 });
-                // map.locate({ setView: false, enableHighAccuracy: true });
                 
                 const markerCur = L.marker(UserPosition.current, {
                     icon: customIcon.userICon

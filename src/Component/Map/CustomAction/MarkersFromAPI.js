@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import { Marker, Popup } from "react-leaflet";
+import { useContext, useEffect, useState, useMemo } from "react";
+import { Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import Button from "../../Button";
 import { typeLocation, typeReqLocation, customIcon } from "../../../assets/types";
@@ -19,9 +19,9 @@ const getDistance = (lat1, lng1, lat2, lng2) => {
     const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos(lat1 * (Math.PI / 180)) *
-            Math.cos(lat2 * (Math.PI / 180)) *
-            Math.sin(dLng / 2) *
-            Math.sin(dLng / 2);
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
 };
@@ -30,8 +30,11 @@ function MarkersFromAPI({ searchLocation }) {
     const [locations, setLocations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [openPopupId, setOpenPopupId] = useState(null); // Theo dõi popup đang mở
     const { toast } = useContext(ToastContext);
+    const map = useMap(); // Lấy instance của bản đồ
 
+    // Lấy dữ liệu từ Firebase
     useEffect(() => {
         const locationsRef = ref(database, "locations");
 
@@ -46,7 +49,7 @@ function MarkersFromAPI({ searchLocation }) {
                                 id: key,
                                 ...data[key],
                             }))
-                            .filter(item => item.lat && item.lng && item.type !== undefined);
+                            .filter((item) => item.lat && item.lng && item.type !== undefined);
                         setLocations(locationsArray);
                     } else {
                         setLocations([]);
@@ -66,20 +69,39 @@ function MarkersFromAPI({ searchLocation }) {
         return () => unsubscribe();
     }, []);
 
+    // Đóng popup khi vuốt bản đồ
+    useEffect(() => {
+        const handleMapMove = () => {
+            if (openPopupId) {
+                setOpenPopupId(null);
+                map.closePopup();
+            }
+        };
+
+        map.on("move", handleMapMove);
+
+        return () => {
+            map.off("move", handleMapMove);
+        };
+    }, [map, openPopupId]);
+
+    // Tính toán nearbyLocations với useMemo
+    const nearbyLocations = useMemo(() => {
+        if (!searchLocation) return [];
+        return locations.filter((location) => {
+            const distance = getDistance(
+                searchLocation[0],
+                searchLocation[1],
+                parseFloat(location.lat),
+                parseFloat(location.lng)
+            );
+            return distance <= 200;
+        });
+    }, [locations, searchLocation]);
+
+    // Kiểm tra loading và error
     if (loading) return <p>Đang tải vị trí...</p>;
     if (error) return <p>Lỗi khi tải vị trí: {error}</p>;
-
-    const nearbyLocations = searchLocation
-        ? locations.filter((location) => {
-              const distance = getDistance(
-                  searchLocation[0],
-                  searchLocation[1],
-                  parseFloat(location.lat),
-                  parseFloat(location.lng)
-              );
-              return distance <= 200;
-          })
-        : [];
 
     const handlerUpdate = async (desc, loc, typeChange, typeReq) => {
         toast.warning("Yêu cầu đang được gửi đi");
@@ -98,6 +120,8 @@ function MarkersFromAPI({ searchLocation }) {
             });
 
             toast.success("Yêu cầu đã được gửi.");
+            setOpenPopupId(null);
+            map.closePopup();
         } catch (error) {
             toast.error("Yêu cầu gửi bị lỗi");
             console.error("Lỗi khi gửi yêu cầu:", error);
@@ -117,8 +141,17 @@ function MarkersFromAPI({ searchLocation }) {
                             ? customIcon.dirtyIcon
                             : customIcon.recycleIcon
                     }
+                    eventHandlers={{
+                        click: () => {
+                            setOpenPopupId(loc.id);
+                        },
+                    }}
                 >
-                    <Popup>
+                    <Popup
+                        onClose={() => {
+                            setOpenPopupId(null);
+                        }}
+                    >
                         <div className={cx("desc-location")}>
                             <br />
                             {loc.desc || "Không có mô tả"}
