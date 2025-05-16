@@ -2,20 +2,21 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import DefaultLayout from "./Layout/DefaultLayout/DefaultLayout";
 import Home from "./Pages/Home/Home";
-import Map from './Component/Map'
+import Map from "./Component/Map";
 import ReqUserManage from "./Pages/ReqUserManage";
 import SideLayout from "./Layout/SideLayout/SideLayout";
 import CurrentLocationManage from "./Pages/CurrentLocationManage";
 import ToastProvider from "./contexts/ToastProvider/ToastProvider";
 import HeaderOnly from "./Layout/HeaderOnly/HeaderOnly";
 import Login from "./Pages/Login";
+import { adminContext } from "./contexts/AdminProvider/AdminProvider";
+import { useContext, useEffect } from "react";
 
 function App() {
-    const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-
+    const { admin, setAdmin } = useContext(adminContext);
+    console.log(admin)
     return (
         <ToastProvider>
-
             <Router>
                 <div className="app">
                     <Routes>
@@ -35,26 +36,29 @@ function App() {
                                 </HeaderOnly>
                             }
                         />
-                        <Route
-                            path={"/Login"}
-                            element={
-                                <HeaderOnly>
-                                    <Login />
-                                </HeaderOnly>
-                            }
-                        />
-                        {isLocalhost ? (
-                            (<Route
+                        {!admin && (
+                            <Route
+                                path="/Login"
+                                element={
+                                    <HeaderOnly>
+                                        <Login />
+                                    </HeaderOnly>
+                                }
+                            />
+                        )}
+                        {admin ? (
+                            <Route
                                 path={"/manager/req"}
                                 element={
                                     <SideLayout>
                                         <ReqUserManage />
                                     </SideLayout>
                                 }
-                            />)
-                        ) : ''}
-                        {isLocalhost ? (
-                            (
+                            />
+                        ) : (
+                            ""
+                        )}
+                        {admin ? (
                             <Route
                                 path={"/manager/cur"}
                                 element={
@@ -63,8 +67,9 @@ function App() {
                                     </SideLayout>
                                 }
                             />
-                            )
-                        ) : ''}
+                        ) : (
+                            ""
+                        )}
                     </Routes>
                 </div>
             </Router>

@@ -1,0 +1,76 @@
+/* Login.module.scss */
+
+.wrapper {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #4f92ff, #5e4fff);
+}
+
+.form {
+    background-color: white;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 400px;
+}
+
+.form-input {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+
+    label {
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+    }
+}
+
+.input-login {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus {
+        border-color: #4f92ff;
+        box-shadow: 0 0 0 3px rgba(79, 146, 255, 0.2);
+        outline: none;
+    }
+}
+
+.head-form {
+    margin: 0 auto;
+    text-align: center;
+    margin-bottom: 28px;
+    color: var(--text-primary-color);
+}
+
+.validate {
+    color: red;
+    font-size: 12px;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background-color: #4f92ff;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: #3b7be0;
+    }
+}

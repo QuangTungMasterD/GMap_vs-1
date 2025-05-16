@@ -4,12 +4,15 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import DefaultStyles from './Component/GlobalStyles';
+import AdminProvider from './contexts/AdminProvider/AdminProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <DefaultStyles>
-      <App />
+      <AdminProvider>
+        <App />
+      </AdminProvider>
     </DefaultStyles>
   </React.StrictMode>
 );

@@ -12,7 +12,7 @@ function ToastProvider({ children }) {
     return (
         <ToastContext.Provider value={value}>
             {children}
-            <ToastContainer pauseOnHover={false} closeOnClick draggable position="top-right" />
+            <ToastContainer autoClose={1500} pauseOnHover={false} closeOnClick draggable position="top-right" />
         </ToastContext.Provider>
     );
 }

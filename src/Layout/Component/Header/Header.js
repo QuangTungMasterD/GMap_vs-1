@@ -1,12 +1,14 @@
 import classNames from "classnames/bind";
 import { NavLink } from "react-router-dom";
+import { adminContext } from "../../../contexts/AdminProvider/AdminProvider";
 
 import styles from './Header.module.scss';
+import { useContext } from "react";
 
 const cx = classNames.bind(styles);
 
 function Header() {
-    const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    const { admin, setAdmin } = useContext(adminContext)
     return (
         <div className={cx('wrapper')}>
             <div className={cx('content')}>
@@ -14,7 +16,7 @@ function Header() {
                     <NavLink className={(nav) => cx('link', {
                         active: nav.isActive
                     })} href="/" to="/">
-                        <img className={cx('image-logo')} src={require('../../../assets/images/LOGO-Text.png')} />
+                        <img alt="" className={cx('image-logo')} src={require('../../../assets/images/LOGO-Text.png')} />
                     </NavLink>
                     <NavLink className={(nav) => cx('link', {
                         active: nav.isActive
@@ -26,14 +28,22 @@ function Header() {
                     })} href="/Map" to="/Map">
                         Map
                     </NavLink>
-                    {isLocalhost ? (<NavLink className={(nav) => cx('link', {
+                    {admin ? (<NavLink className={(nav) => cx('link', {
                         active: nav.isActive
                     })} href="/manager/req" to="/manager/req">
                         Manager
                     </NavLink>): ''}
                 </div>
                 <div className={cx('action')}>
-
+                    {!admin ? 
+                        <NavLink className={(nav) => cx('link', {
+                        active: nav.isActive
+                        })} href="/Login" to="/Login">
+                            Login
+                        </NavLink> :
+                        ''
+                        
+                    }
                 </div>
             </div>
         </div>
